@@ -85,6 +85,11 @@ public class CreateBoard : MonoBehaviour
         return ((bitboard & mask) != 0);
     }
 
+    void CalculateScore()
+    {
+        score.text = "Score: " + CellCount(playerBB);
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -102,6 +107,7 @@ public class CreateBoard : MonoBehaviour
                     house.transform.parent = hit.collider.gameObject.transform;
                     house.transform.localPosition = Vector3.zero;
                     playerBB = SetCellState(playerBB, r, c);
+                    CalculateScore();
                 }
 
             }
