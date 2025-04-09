@@ -13,8 +13,9 @@ public class CreateBoard : MonoBehaviour
     public GameObject treePrefab;
     public Text score;
     GameObject[] tiles;
-    long dirtBB;
-
+    long dirtBB = 0;
+    long treeBB = 0;
+    long playerBB = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -46,11 +47,12 @@ public class CreateBoard : MonoBehaviour
         int rr = UnityEngine.Random.Range(0, 8);
         int rc = UnityEngine.Random.Range(0, 8);
 
-        if (GetCellState(dirtBB, rr, rc))
+        if (GetCellState(dirtBB & ~playerBB, rr, rc))
         {
             GameObject tree = Instantiate(treePrefab);
             tree.transform.parent = tiles[rr * 8 + rc].transform;
             tree.transform.localPosition = Vector3.zero;
+            treeBB = SetCellState(treeBB, rr, rc);
         }
     }
 
@@ -86,6 +88,17 @@ public class CreateBoard : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (Input.GetMouseButtonDown(0))
+        {
+            RaycastHit hit;
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out hit))
+            {
+                GameObject house = Instantiate(housePrefab);
+                house.transform.parent = hit.collider.gameObject.transform;
+                house.transform.localPosition = Vector3.zero;
+                playerBB = SetCellState(playerBB, (int)hit.collider.gameObject.transform.position.z, (int)hit.collider.gameObject.transform.position.x);
+            }
+        }
     }
 }
